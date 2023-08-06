@@ -2,7 +2,7 @@ import json
 from api_utils import query_chatgpt
 from apikeys import APIKEYS, GPT4_APIKEYS
 import argparse
-from utils import load_gpt_outputs, save_gpt_outputs, Classifier
+from utils import Classifier
 import os
 from data_filter import DataFilter, template1, template2, template3, template4, template5, template6
 
