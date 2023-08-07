@@ -48,6 +48,7 @@ def gen_query(engine, instances_generator, existing_data, retry_limit, apikeys, 
         if existing_data is not None and len(existing_data)>0 and x["id"] in existing_data:
             yield {'result': existing_data[x["id"]]} # write to file again
         elif len(x['prompt'].split())>1500:
+            # 当文本数据超过1500时，直接抛弃，可优化
             yield {'result': None} # skip
         else:
             apikeys_index = query_idx % num_keys
