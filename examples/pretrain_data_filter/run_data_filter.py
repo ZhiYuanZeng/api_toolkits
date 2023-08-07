@@ -4,7 +4,8 @@ from apikeys import APIKEYS, GPT4_APIKEYS
 import argparse
 from utils import Classifier
 import os
-from data_filter import DataFilter, template1, template2, template3, template4, template5, template6
+from data_filter import DataFilter
+from prompt import template1, template2, template3, template4, template5, template6
 
 def read_gpt4_response(input_path):
     prompts = []
@@ -104,8 +105,11 @@ if __name__=='__main__':
 
     gpt3_model = 'gpt-3.5-turbo'
     gpt4_model = 'gpt-4'
+    # texts 是文本， labels是标签， 正常样本 1， 脏样本 -1
     texts, labels = read_human_data(args.input_path)
 
+    # import pdb
+    # pdb.set_trace()
     classify_based_on_gpt(
         texts, labels,
         gpt_model=gpt3_model, 

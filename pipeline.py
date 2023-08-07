@@ -14,8 +14,10 @@ class BasePipeline():
         return self.parse_func(raw_text)
 
     def post_func(self, gpt_response):
+        # 后处理函数
         try:
             if 'output' in gpt_response:
+                # 已经分析好的结果
                 return gpt_response # already parsed
             data = self.parse(raw_text=gpt_response['response_metadata'])
         except Exception as e:
