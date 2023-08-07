@@ -1,14 +1,15 @@
 import openai
 openai.api_base = "https://ai-proxy.shlab.tech/internal"
 
+# 如果key失效，找徐瑞良
 APIKEYS=[
-    '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',
-    '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',
-    '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',
-    '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'
+    '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'
+
 ]
 GPT4_APIKEYS=[
-    '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'
+    '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',
+    #'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'
+
 ]
 
 
