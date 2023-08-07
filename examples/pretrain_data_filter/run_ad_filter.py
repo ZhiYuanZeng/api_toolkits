@@ -1,4 +1,4 @@
-from ad_filter import AdFilter, template1
+from ad_filter import AdFilter, template1, template2
 import argparse
 import json
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
@@ -21,13 +21,13 @@ def eval_template(template, texts, labels, output_path):
     print(f'using templat:.................................', file=fo)
     print(template)
     threshes = [ i for i in range(1,10)]
-
     for thresh in threshes:
         for o in gpt_outputs:
             if o is not None:
-                score = int(o['output'])
+                score = int(o['score'])
                 id = int(o['id'])
                 scores[id] = score
+                # 为了计算广告的precison, recall,
                 # score >= 5 认为是1，为广告 score越高，说明越是广告。 score低为无广告
                 preds[id] = (score>=thresh)
         
