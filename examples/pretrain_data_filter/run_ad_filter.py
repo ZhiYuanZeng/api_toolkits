@@ -29,9 +29,6 @@ def eval_template(template, texts, labels, output_path):
     print(f'using templat:.................................', file=fo)
     print(template)
 
-    import pdb
-    pdb.set_trace()
-
     print('acc:', accuracy_score(labels, preds), file=fo)
     print('f1:', f1_score(labels, preds), file=fo)
     print('precision_score:', precision_score(labels, preds), file=fo)
@@ -58,9 +55,7 @@ if __name__=='__main__':
                 labels.append(0)
             else:
                 labels.append(1)
-    import pdb
-    pdb.set_trace()
-    
+
     eval_template(template1, texts, labels, output_path)
  
 
