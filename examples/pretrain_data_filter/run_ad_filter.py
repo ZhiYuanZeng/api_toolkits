@@ -28,7 +28,6 @@ def eval_template(template, texts, labels, output_path):
                 score = int(o['output'])
                 id = int(o['id'])
                 scores[id] = score
-                # score < 5 认为是正样本， score越高，说明越是广告
                 # score >= 5 认为是1，为广告 score越高，说明越是广告。 score低为无广告
                 preds[id] = (score>=thresh)
         
@@ -59,7 +58,7 @@ if __name__=='__main__':
             #     labels.append(0)
             # else:
             #     labels.append(1)
-            
+
             if data['final_result'] == "yes":
                 labels.append(0)
             else:
