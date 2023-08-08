@@ -1,5 +1,5 @@
 # a strict version of template5 to increase precision
-template6="""
+general_filter_template6 ="""
 Assume you are a pre-trainer of an artificial intelligence language model. You are now examining a piece of text data scraped from the internet. Your task is to judge whether this data is of exceptional quality and suitability for training a large language model.
 
 Here is the data you need to evaluate:

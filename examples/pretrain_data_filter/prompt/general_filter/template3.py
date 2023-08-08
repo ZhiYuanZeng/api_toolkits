@@ -1,4 +1,4 @@
-template3 = """
+general_filter_template3 = """
 Assume you are a pre-trainer of an artificial intelligence language model. You are now examining a piece of text data scraped from the internet. Your task is to decide whether this data is suitable for training a large language model.
 
 Here is the data you need to evaluate:

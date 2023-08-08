@@ -2,14 +2,6 @@ import json
 import re
 from pipeline import BasePipeline
 
-template1 = """
-Given a document, analyze and determine whether it can be classified as advertisement. Provide a score scale (1-10), with 1 being "Low", 5 being "middle" and 10 being "High". You can only provide the score and do not output other things.
-
-{}
-"""
-
-
-
 def parse_func(input_string):
     # Define the regular expression pattern for both float and integer numbers
     number_pattern = r'[-+]?\d*\.\d+|\d+'

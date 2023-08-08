@@ -5,7 +5,7 @@ import argparse
 from utils import Classifier
 import os
 from data_filter import DataFilter
-from prompt import template1, template2, template3, template4, template5, template6
+from prompt import general_filter_template5
 
 def read_gpt4_response(input_path):
     prompts = []
@@ -69,6 +69,8 @@ def classify_based_on_gpt(
         retry_limit=5,
         temperature=0.)
     
+    print(f"current get {len(gpt_outputs)} gpt output, total {len(texts)}")
+
     gpt_outputs_preds = []
     gpt_outputs_labels = []
     for d in gpt_outputs:
@@ -97,6 +99,8 @@ def classify_based_on_gpt(
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Description of your script')
     parser.add_argument('--input_path', help='Help message for arg_name')
+    parser.add_argument('--output_dir', help='Help message for arg_name')
+    parser.add_argument('--output_name', help='Help message for arg_name')
     parser.add_argument('--do_fit', action='store_true', help='Help message for arg_name')
     parser.add_argument('--do_test', action='store_true', help='Help message for arg_name')
     parser.add_argument('--do_cross_validation', action='store_true', help='Help message for arg_name')
@@ -105,17 +109,20 @@ if __name__=='__main__':
 
     gpt3_model = 'gpt-3.5-turbo'
     gpt4_model = 'gpt-4'
+    output_dir = args.output_dir
+    output_name = args.output_name
     # texts 是文本， labels是标签， 正常样本 1， 脏样本 -1
     texts, labels = read_human_data(args.input_path)
+
 
     # import pdb
     # pdb.set_trace()
     classify_based_on_gpt(
         texts, labels,
         gpt_model=gpt3_model, 
-        template=template5, 
-        gpt_outputs_path=f'./gptoutputs_template5_{gpt3_model}.jsonl', 
+        template=general_filter_template5, 
+        gpt_outputs_path=f'${output_dir}//${output_name}_gptoutputs_template5_{gpt3_model}.jsonl', 
         do_fit=args.do_fit,
         do_cross_validation=args.do_cross_validation,
         do_test=args.do_test,
-        classifier_path=f'./classifier_template5_{gpt3_model}.joblib')
+        classifier_path=f'${output_dir}//classifier_template5_{gpt3_model}.joblib')

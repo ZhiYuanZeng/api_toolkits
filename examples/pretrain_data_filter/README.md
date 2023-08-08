@@ -22,3 +22,10 @@ python run_data_rewrite.py --do_refine --gpt_feature_path gptoutputs_template5_g
 # evaluate refinement
 python run_data_rewrite.py --do_test --refined_text_path refined_template5_gpt-3.5-turbo.jsonl
 ```
+
+
+## 广告检测
+```bash
+cd examples/pretrain_data_filter
+bash scripts/run_ad_filter.sh
+```

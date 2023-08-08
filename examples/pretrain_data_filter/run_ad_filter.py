@@ -1,9 +1,14 @@
-from ad_filter import AdFilter, template1, template2
+from ad_filter import AdFilter
+from prompt import ad_filter_template1, ad_filter_template2, ad_filter_template3
+import io
+import csv
 import argparse
 import json
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.metrics import precision_recall_curve
-def eval_template(template, texts, labels, output_path):
+import os
+from sklearn.metrics import confusion_matrix
+def eval_template(template, texts, labels, output_path, eval_report=False):
     data_filter = AdFilter.build_filter(template)
     gpt_outputs = data_filter.query(
         texts=texts,
@@ -20,6 +25,7 @@ def eval_template(template, texts, labels, output_path):
     fo = None
     print(f'using templat:.................................', file=fo)
     print(template)
+    eval_result = ["id,text,label,preds,score"]
     threshes = [ i for i in range(1,10)]
     for thresh in threshes:
         for o in gpt_outputs:
@@ -36,14 +42,83 @@ def eval_template(template, texts, labels, output_path):
         print('f1:', f1_score(labels, preds), file=fo)
         print('precision_score:', precision_score(labels, preds), file=fo)
         print('recall_score:', recall_score(labels, preds), file=fo)
+
+        # 确认混淆矩阵输出所有类
+        tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
+    
+        print(f'confuse_matrix: (tn:{tn}, fp:{fp}, fn:{fn}, tp:{tp})',)
+
         print('--------------------------------------\n', file=fo)
+
+        if eval_report:
+            report_name = os.path.join(os.path.dirname(output_path), os.path.basename(output_path).split(".")[0] + f"_thresh{thresh}_report.csv")
+            # with open(report_name, 'w') as f:
+            #     f.write("id,text,label,preds,score\n")
+            #     for i in range(len(labels)):
+            #         # import pdb
+            #         # pdb.set_trace()
+            #         line = f'{i},"{texts[i]}",{labels[i]},{int(preds[i])},{scores[i]}\n'
+            #         f.write(line)
+
+
+            with io.open(report_name, 'w', encoding='utf-8') as f:
+
+                writer = csv.writer(f)
+                writer.writerow(["id", "text", "label", "preds", "score"])
+                for i in range(len(labels)):
+                        writer.writerow([i, str(texts[i]), labels[i], int(preds[i]), scores[i]])
+
+                # versions = results["versions"]
+
+                # for k,v in sorted(results["results"].items()):
+                #     if k not in versions:
+                #         versions[k] = -1
+
+                #     if "acc" in v:
+                #         writer.writerow([k, "acc", v["acc"], v["acc_stderr"], versions[k]])
+                #     if "acc_norm" in v:
+                #         writer.writerow([k, "acc_norm", v["acc_norm"], v["acc_norm_stderr"], versions[k]])
+                #     if "f1" in v:
+                #         writer.writerow([k, "f1", v["f1"], v["f1_stderr"] if "f1_stderr" in v else "", versions[k]])
+                #     # if "ppl" in v:
+                #     #     writer.writerow([k, "ppl", v["ppl"], v["ppl_stderr"], versions[k]])
+                #     # if "em" in v:
+                #     #     writer.writerow([k, "em", v["em"], v["em_stderr"] if "em_stderr" in v else "", versions[k]])
+
+
+def create_missing_directories(path):
+    # 分割路径为目录层级
+    directories = path.split(os.path.sep)
+    current_path = ""
+    
+    # 逐层创建目录
+    for directory in directories:
+        current_path = os.path.join(current_path, directory)
+        if not os.path.exists(current_path):
+            os.makedirs(current_path)
+
+
+def create_output_path(output_dir, template, input_path):
+    create_missing_directories(output_dir)
+    input_name = os.path.basename(input_path).split(".")[0]
+    output_path = f"{output_dir}/gptout_temp_{template}_data_{input_name}.jsonl"
+    return output_path
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Description of your script')
     parser.add_argument('--input_path', help='Help message for arg_name')
-    parser.add_argument('--output_path', help='Help message for arg_name')
+    parser.add_argument('--output_dir', help='Help message for arg_name')
+    parser.add_argument('--output_name', help='Help message for arg_name')
+    parser.add_argument('--template', help='Help message for arg_name')
+    parser.add_argument('--eval_report', action='store_true')
     args = parser.parse_args()
-    output_path = args.output_path
+    input_path = args.input_path
+    output_dir = args.output_dir
+    template = args.template
+    eval_report = args.eval_report
+    output_path = create_output_path(output_dir, template, input_path)
+
+
     texts = []
     labels = []
     with open(args.input_path, 'r') as f:
@@ -65,6 +140,6 @@ if __name__=='__main__':
                 # 让广告成为1
                 labels.append(1)
 
-    eval_template(template1, texts, labels, output_path)
+    eval_template(eval(template), texts, labels, output_path, eval_report)
  
 
