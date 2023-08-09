@@ -4,6 +4,7 @@ import io
 import csv
 import argparse
 import json
+from utils import create_output_path
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.metrics import precision_recall_curve
 import os
@@ -27,6 +28,7 @@ def eval_template(template, texts, labels, output_path, eval_report=False):
     print(template)
     eval_result = ["id,text,label,preds,score"]
     threshes = [ i for i in range(1,10)]
+    print(f"output path:{output_path}")
     for thresh in threshes:
         for o in gpt_outputs:
             if o is not None:
@@ -52,59 +54,14 @@ def eval_template(template, texts, labels, output_path, eval_report=False):
 
         if eval_report:
             report_name = os.path.join(os.path.dirname(output_path), os.path.basename(output_path).split(".")[0] + f"_thresh{thresh}_report.csv")
-            # with open(report_name, 'w') as f:
-            #     f.write("id,text,label,preds,score\n")
-            #     for i in range(len(labels)):
-            #         # import pdb
-            #         # pdb.set_trace()
-            #         line = f'{i},"{texts[i]}",{labels[i]},{int(preds[i])},{scores[i]}\n'
-            #         f.write(line)
-
 
             with io.open(report_name, 'w', encoding='utf-8') as f:
-
                 writer = csv.writer(f)
                 writer.writerow(["id", "text", "label", "preds", "score"])
                 for i in range(len(labels)):
                         writer.writerow([i, str(texts[i]), labels[i], int(preds[i]), scores[i]])
 
-                # versions = results["versions"]
-
-                # for k,v in sorted(results["results"].items()):
-                #     if k not in versions:
-                #         versions[k] = -1
-
-                #     if "acc" in v:
-                #         writer.writerow([k, "acc", v["acc"], v["acc_stderr"], versions[k]])
-                #     if "acc_norm" in v:
-                #         writer.writerow([k, "acc_norm", v["acc_norm"], v["acc_norm_stderr"], versions[k]])
-                #     if "f1" in v:
-                #         writer.writerow([k, "f1", v["f1"], v["f1_stderr"] if "f1_stderr" in v else "", versions[k]])
-                #     # if "ppl" in v:
-                #     #     writer.writerow([k, "ppl", v["ppl"], v["ppl_stderr"], versions[k]])
-                #     # if "em" in v:
-                #     #     writer.writerow([k, "em", v["em"], v["em_stderr"] if "em_stderr" in v else "", versions[k]])
-
-
-def create_missing_directories(path):
-    # 分割路径为目录层级
-    directories = path.split(os.path.sep)
-    current_path = ""
-    
-    # 逐层创建目录
-    for directory in directories:
-        current_path = os.path.join(current_path, directory)
-        if not os.path.exists(current_path):
-            os.makedirs(current_path)
-
-
-def create_output_path(output_dir, template, input_path):
-    create_missing_directories(output_dir)
-    input_name = os.path.basename(input_path).split(".")[0]
-    output_path = f"{output_dir}/gptout_temp_{template}_data_{input_name}.jsonl"
-    return output_path
-
-if __name__=='__main__':
+def main():
     parser = argparse.ArgumentParser(description='Description of your script')
     parser.add_argument('--input_path', help='Help message for arg_name')
     parser.add_argument('--output_dir', help='Help message for arg_name')
@@ -117,7 +74,6 @@ if __name__=='__main__':
     template = args.template
     eval_report = args.eval_report
     output_path = create_output_path(output_dir, template, input_path)
-
 
     texts = []
     labels = []
@@ -133,13 +89,22 @@ if __name__=='__main__':
             #     labels.append(0)
             # else:
             #     labels.append(1)
-
-            if data['final_result'] == "yes":
-                labels.append(0)
-            else:
-                # 让广告成为1
-                labels.append(1)
+            if "final_result" in data:
+                if data['final_result'] == "yes":
+                    labels.append(0)
+                else:
+                    # 让广告成为1
+                    labels.append(1)
+            elif "ad_classify" in data:
+                if data['ad_classify'] == "1":
+                    labels.append(0)
+                else:
+                    # 让广告成为1
+                    labels.append(1)
 
     eval_template(eval(template), texts, labels, output_path, eval_report)
  
 
+
+if __name__=='__main__':
+    main()

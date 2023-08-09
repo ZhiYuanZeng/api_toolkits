@@ -2,7 +2,7 @@ import json
 from api_utils import query_chatgpt
 from apikeys import APIKEYS, GPT4_APIKEYS
 import argparse
-from utils import Classifier
+from utils import Classifier, create_output_path
 import os
 from data_filter import DataFilter
 from prompt import general_filter_template5
@@ -49,14 +49,15 @@ def read_human_data(input_path):
             if label == 'yes':
                 label = 1
             else:
-                label = -1
+                #label = -1
+                label = 0
             labels.append(label)
             prompts.append(prompt)
     return prompts, labels
 
 def classify_based_on_gpt(
         texts, labels, gpt_model, template, gpt_outputs_path=None, 
-        do_fit=False, do_cross_validation=False, do_test=False, classifier_path=None):
+        do_fit=False, do_cross_validation=False, do_test=False, classifier_path=None, threshold=0.5):
     data_filter = DataFilter.build_filter(template)
 
     print('data size:',len(texts))
@@ -92,7 +93,7 @@ def classify_based_on_gpt(
     if do_test:
         classifier = Classifier()
         classifier.load_model(classifier_path)
-        print(classifier.test(gpt_outputs_preds, gpt_outputs_labels))
+        print(classifier.test(gpt_outputs_preds, gpt_outputs_labels, threshold=threshold))
 
 
 
@@ -101,8 +102,10 @@ if __name__=='__main__':
     parser.add_argument('--input_path', help='Help message for arg_name')
     parser.add_argument('--output_dir', help='Help message for arg_name')
     parser.add_argument('--output_name', help='Help message for arg_name')
+    parser.add_argument('--template', help='Help message for arg_name')
     parser.add_argument('--do_fit', action='store_true', help='Help message for arg_name')
     parser.add_argument('--do_test', action='store_true', help='Help message for arg_name')
+    parser.add_argument('--threshold', type=float, default=0.5, help='thresh is the class 1 threshold')
     parser.add_argument('--do_cross_validation', action='store_true', help='Help message for arg_name')
 
     args = parser.parse_args()
@@ -111,18 +114,22 @@ if __name__=='__main__':
     gpt4_model = 'gpt-4'
     output_dir = args.output_dir
     output_name = args.output_name
-    # texts 是文本， labels是标签， 正常样本 1， 脏样本 -1
+    template = args.template
+    input_path = args.input_path 
+    threshold = args.threshold
+
+    # texts 是文本， labels是标签， 正常样本 1， 脏样本 0
     texts, labels = read_human_data(args.input_path)
+    output_path = create_output_path(output_dir, template, input_path, prefix="gptout_general_filter")
+    classifier_path = create_output_path(output_dir, template, input_path, prefix="classifer_general_filter", format="joblib")
 
-
-    # import pdb
-    # pdb.set_trace()
     classify_based_on_gpt(
         texts, labels,
         gpt_model=gpt3_model, 
-        template=general_filter_template5, 
-        gpt_outputs_path=f'${output_dir}//${output_name}_gptoutputs_template5_{gpt3_model}.jsonl', 
+        template=eval(template), 
+        gpt_outputs_path=output_path, 
         do_fit=args.do_fit,
         do_cross_validation=args.do_cross_validation,
         do_test=args.do_test,
-        classifier_path=f'${output_dir}//classifier_template5_{gpt3_model}.joblib')
+        classifier_path=classifier_path,
+        threshold=threshold)

@@ -33,6 +33,6 @@ class AdFilter(BasePipeline):
             # raise e
         
         # hard code, threshold can be decided by metrics
-        thresh = 6
+        thresh = 5
         # 对外输出的0,1标签，保持0为负样本，1为正样本
         return {'output': int(data<thresh), "score": data, 'id':gpt_response['id']}
