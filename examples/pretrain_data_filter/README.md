@@ -29,3 +29,8 @@ python run_data_rewrite.py --do_test --refined_text_path refined_template5_gpt-3
 cd examples/pretrain_data_filter
 bash scripts/run_ad_filter.sh
 ```
+
+
+# 依赖
+pip install google-api-python-client==2.96.0
+pip install tiktoken==0.4.0

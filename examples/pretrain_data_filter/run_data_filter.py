@@ -101,7 +101,6 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Description of your script')
     parser.add_argument('--input_path', help='Help message for arg_name')
     parser.add_argument('--output_dir', help='Help message for arg_name')
-    parser.add_argument('--output_name', help='Help message for arg_name')
     parser.add_argument('--template', help='Help message for arg_name')
     parser.add_argument('--do_fit', action='store_true', help='Help message for arg_name')
     parser.add_argument('--do_test', action='store_true', help='Help message for arg_name')
@@ -113,7 +112,6 @@ if __name__=='__main__':
     gpt3_model = 'gpt-3.5-turbo'
     gpt4_model = 'gpt-4'
     output_dir = args.output_dir
-    output_name = args.output_name
     template = args.template
     input_path = args.input_path 
     threshold = args.threshold
