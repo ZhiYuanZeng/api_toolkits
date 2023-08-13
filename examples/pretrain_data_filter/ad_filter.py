@@ -2,14 +2,6 @@ import json
 import re
 from pipeline import BasePipeline
 
-template1 = """
-Given a document, analyze and determine whether it can be classified as advertisement. Provide a score scale (1-10), with 1 being "Low", 5 being "middle" and 10 being "High". You can only provide the score and do not output other things.
-
-{}
-"""
-
-
-
 def parse_func(input_string):
     # Define the regular expression pattern for both float and integer numbers
     number_pattern = r'[-+]?\d*\.\d+|\d+'
@@ -41,6 +33,6 @@ class AdFilter(BasePipeline):
             # raise e
         
         # hard code, threshold can be decided by metrics
-        thresh = 6
+        thresh = 5
         # 对外输出的0,1标签，保持0为负样本，1为正样本
         return {'output': int(data<thresh), "score": data, 'id':gpt_response['id']}
