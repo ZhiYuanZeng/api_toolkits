@@ -104,7 +104,7 @@ def query_chatgpt_and_save_results(
         engine, instances_generator, existing_data, retry_limit, apikeys, **completion_kwargs))
     
     buffer = []
-    buffer_size = 64
+    buffer_size = 10
 
     if output_path is not None:
         fout = open(output_path, 'w')
