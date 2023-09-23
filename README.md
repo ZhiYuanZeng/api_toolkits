@@ -30,5 +30,12 @@ query(
     temperature=0.)
 ```
 
-4. examples提供了1个调用api的项目：
+4. examples提供了6个调用api的项目：
 - pretrain_data_filter: 过滤、改写低质量语料
+- code_filter: 过滤低质量代码
+- code_generate: 生成code数据
+- super_glue_cot: 针对superglue问题生成cot数据
+- wizard_code: 迭代地更新code docstring
+- wizard_math: 迭代得更新math question
+
+在这些examples中，code_filter和code_generate调用`query_chatgpt_and_save_results`来使用api，其它examples都通过继承`BasePipeline`构建pipeline。
