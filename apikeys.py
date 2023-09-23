@@ -12,6 +12,10 @@ GPT4_APIKEYS=[
 
 ]
 
+PERSPECTIVE_APIKEYS = [
+    'AIzaSyCK9teFVz_GYSxrsVYnJX42-HFEYDPpeJE'
+]
+
 
 def _check_key(message: str, key='', model='gpt-3.5-turbo') -> str:
     """

@@ -1,7 +1,6 @@
 from pipeline import BasePipeline
 import re
-from prompt import template1, template2, template3, template4, template5, template6
-
+from prompt import general_filter_template1, general_filter_template2, general_filter_template3, general_filter_template4, general_filter_template5, general_filter_template6
 
 def parse_yes_or_no(raw_text):
     if raw_text.lower() not in ('yes', 'no'):
@@ -20,11 +19,11 @@ class DataFilter(BasePipeline):
     @classmethod
     def build_filter(cls, template:str):
         pipelines = {
-            template1: parse_yes_or_no,
-            template2: parse_yes_or_no,
-            template3: parse_score,
-            template4: parse_score,
-            template5: parse_score,
-            template6: parse_score,
+            general_filter_template1: parse_yes_or_no,
+            general_filter_template2: parse_yes_or_no,
+            general_filter_template3: parse_score,
+            general_filter_template4: parse_score,
+            general_filter_template5: parse_score,
+            general_filter_template6: parse_score,
         }
         return cls(template, pipelines[template])
