@@ -1,5 +1,4 @@
 import openai
-openai.api_base = "https://ai-proxy.shlab.tech/internal"
 
 APIKEYS=[
 ]
